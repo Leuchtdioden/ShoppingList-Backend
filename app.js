@@ -2,7 +2,13 @@ var Hapi = require('hapi');
 var Good = require('good');
 var models = require('./models');
 
-var server = new Hapi.Server();
+var server = new Hapi.Server({
+  connections: {
+  routes: {
+  cors: true
+  }
+  }
+});
 
 server.connection({ port: 3000 });
 

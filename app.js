@@ -1,5 +1,6 @@
 var Hapi = require('hapi');
 var Good = require('good');
+var models = require('./models');
 
 var server = new Hapi.Server();
 
@@ -9,7 +10,9 @@ server.route({
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-        reply('Hello, world!');
+        models.List.findAll().then((lists) => {
+            reply(lists).code(200)
+        });
     }
 });
 
@@ -29,8 +32,19 @@ server.register({
        throw err;
     }
 
-    server.start(() => {
+    /*server.start(() => {
         server.log('info', 'Server running at: ' + server.info.uri)
-    });
+    });*/
+
+    models.sequelize.sync().then(() => {
+        models.List.create({
+            title: '123'
+        }).then(() => {
+            server.start(() => {
+                server.log('info', 'Server running at: ' + server.info.uri)
+            });
+        })
+
+    })
 });
 
